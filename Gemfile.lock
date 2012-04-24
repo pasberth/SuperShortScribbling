@@ -1,0 +1,10 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    regparsec (0.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  regparsec
