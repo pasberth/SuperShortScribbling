@@ -1,6 +1,6 @@
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'sss'
 
-p __dir__ # == File.dirname(__FILE__)
-p __lib__
-p __bin__
+puts __dir__ # == Pathname.new(File.dirname(__FILE__))
+puts __lib__ # == __dir__ + '../lib'
+puts __bin__ # == __dir__ + '../bin'
