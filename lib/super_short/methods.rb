@@ -1,6 +1,26 @@
 module SuperShort
   module Methods
+
+    begin
+      require 'binding_of_caller'
     
+      def __root__
+        '..'
+      end
+
+      def __dir__
+        File.dirname binding.of_caller(2).eval('__FILE__')
+      end
+      
+      def __lib__
+        File.expand_path File.join(File.dirname(binding.of_caller(2).eval('__FILE__')), __root__, 'lib')
+      end
+      
+      def __bin__
+        File.expand_path File.join(File.dirname(binding.of_caller(2).eval('__FILE__')), __root__, 'bin')
+      end
+    rescue LoadError; end
+
     def method_missing method, *args, &block
       stat = ParserCombinators::MethodName.parse(method.to_s) or super
       self.class.class_eval(<<-DEFINE)
