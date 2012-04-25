@@ -4,4 +4,5 @@ module SuperShort
   require 'super_short/modifiable'
   require 'super_short/autoload_method'
   require 'super_short/force_dynamic'
+  require 'super_short/scribbleable'
 end

@@ -1,7 +1,6 @@
 require 'super_short'
 extend SuperShort::KernelMethods
-extend SuperShort::ObjectMethods
-extend SuperShort::Modifiable
+extend SuperShort::Scribbleable
 
 class String
   include SuperShort::ForceDynamicString
