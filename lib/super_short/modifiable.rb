@@ -3,6 +3,12 @@ module SuperShort
 
     def method_missing method, *args, &block
       stat = ParserCombinators::MethodName.parse(method.to_s) or super
+      if stat.empty?
+        super
+      elsif stat.length == 1
+        super
+      end
+      
       self.class.class_eval(<<-DEFINE)
         def #{stat.join '_'}(*args, &block)       # def set_if(*args, &block)
           __eval_stat__(#{stat}, *args, &block)   #   __eval__stat__(["set", "if"], *args, &block)
@@ -20,9 +26,9 @@ module SuperShort
       end
 
       case stat.first
-      when 'class', 'try'
+      when 'class', 'try', 'will'
         mod = stat.shift
-        return send "__modifier_#{pmod}", stat, *args, &block
+        return send "__modifier_#{mod}", stat, *args, &block
       end
       
       case stat.length
@@ -52,6 +58,10 @@ module SuperShort
       else
         result
       end
+    end
+    
+    def __modifier_will stat, *args, &block
+      lambda { |*a, &b| __eval_stat__ stat, *a, &b }
     end
     
     def __modifier_class stat, *args, &block
