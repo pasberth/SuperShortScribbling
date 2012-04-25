@@ -9,7 +9,7 @@ module SuperShort
       method(:"#{attr}=")
     end
 
-    def get attr
+    def get attr, *args
       case attr.to_s
       when /^@@.*$/ then [Class, Module].include?(self.class) ? class_variable_get(attr) : self.class.class_variable_get(attr)
       when /^@.*$/ then instance_variable_get attr

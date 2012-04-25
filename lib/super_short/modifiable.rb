@@ -2,7 +2,7 @@ module SuperShort
   module Modifiable
 
     def method_missing method, *args, &block
-      stat = ParserCombinators::MethodName.parse(method.to_s) or super
+      stat = ParserCombinators::InfixExp.parse(method.to_s) or super
       if stat.empty?
         super
       elsif stat.length == 1
@@ -10,15 +10,22 @@ module SuperShort
       end
       
       self.class.class_eval(<<-DEFINE)
-        def #{stat.join '_'}(*args, &block)       # def set_if(*args, &block)
+        def #{method}(*args, &block)                    # def set_if(*args, &block)
           __eval_stat__(self, #{stat}, *args, &block)   #   __eval__stat__(["set", "if"], *args, &block)
-        end                                       # end
+        end                                             # end
       DEFINE
-      send stat.join('_'), *args, &block
+      send method, *args, &block
     end
     
     def __eval_stat__ receiver, stat, *args, &block
       stat = stat.clone
+
+      case stat.first
+      when 'or', 'and'
+        iop = stat.shift
+        return send "__infix_operator_#{iop}", receiver, stat, *args, &block
+      end
+
       case stat.last
       when 'if', 'if!', 'unless', 'all', 'all_in', 'in'
         pmod = stat.pop
@@ -37,6 +44,19 @@ module SuperShort
       else
         super
       end
+    end
+    
+    def __infix_operator_or receiver, stat, *args, &block
+      a, b = *stat
+      if (result = __eval_stat__ receiver, a, *args, &block).nil?
+        __eval_stat__ receiver, b, *args, &block
+      else
+        result
+      end
+    end
+    
+    def __infix_operator_and
+      raise NotImplementedError
     end
     
     def __post_modifier_if receiver, stat, *args, &block
