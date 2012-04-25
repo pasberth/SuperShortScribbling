@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "#send_if" do
   subject do
     Class.new do
+      include SuperShort::ObjectMethods
       include SuperShort::Modifiable
       def upcase a
         a.upcase
@@ -38,6 +39,7 @@ end
 describe "#send_if!" do
   subject do
     Class.new do
+      include SuperShort::ObjectMethods
       include SuperShort::Modifiable
       def upcase a
         a.upcase

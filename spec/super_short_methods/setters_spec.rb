@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "#set" do
   subject do
     Class.new do
+      include SuperShort::ObjectMethods
       include SuperShort::Modifiable
       attr_accessor :example
     end.new
@@ -16,6 +17,7 @@ end
 describe "#set_all" do
   subject do
     Class.new do
+      include SuperShort::ObjectMethods
       include SuperShort::Modifiable
       attr_accessor :example1
       attr_accessor :example2
@@ -34,6 +36,7 @@ end
 describe "#set_if" do
   subject do
     Class.new do
+      include SuperShort::ObjectMethods
       include SuperShort::Modifiable
       attr_accessor :example
     end.new
@@ -56,6 +59,7 @@ end
 describe "#set_if" do
   subject do
     Class.new do
+      include SuperShort::ObjectMethods
       include SuperShort::Modifiable
       attr_accessor :example
     end.new
@@ -77,6 +81,7 @@ end
 describe "#set_unless" do
   subject do
     Class.new do
+      include SuperShort::ObjectMethods
       include SuperShort::Modifiable
       attr_accessor :example
     end.new

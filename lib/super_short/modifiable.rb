@@ -77,19 +77,5 @@ module SuperShort
         __eval_stat__ stat, *args, &block
       rescue NoMethodError; end
     end
-    
-    alias getter method
-
-    def setter attr
-      method(:"#{attr}=")
-    end
-
-    def get attr
-      send(:"#{attr}")
-    end
-
-    def set attr, value
-      send(:"#{attr}=", value)
-    end
   end
 end

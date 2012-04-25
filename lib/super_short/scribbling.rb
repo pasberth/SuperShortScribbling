@@ -1,5 +1,6 @@
 require 'super_short'
-extend SuperShort::Methods
+extend SuperShort::KernelMethods
+extend SuperShort::ObjectMethods
 extend SuperShort::Modifiable
 
 class String
