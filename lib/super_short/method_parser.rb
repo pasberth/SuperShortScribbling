@@ -4,7 +4,7 @@ module SuperShort
   module ParserCombinators
     include RegParsec::Regparsers
     extend self
-    Modifier = one_of('class')
+    Modifier = one_of('class', 'try')
     PostModifier = one_of('if!', 'if', 'unless', 'all')
     Verb = one_of('send', 'get', 'set')
     MethodName = one_of(

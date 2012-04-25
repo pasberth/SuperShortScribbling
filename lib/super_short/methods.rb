@@ -41,7 +41,7 @@ module SuperShort
       end
 
       case stat.first
-      when 'class'
+      when 'class', 'try'
         mod = stat.shift
         return send "__modifier_#{pmod}", stat, *args, &block
       end
@@ -67,13 +67,13 @@ module SuperShort
       args.shift.each { |*a| __eval_stat__ stat, *a.flatten(1) }
     end
     
-    #def __unless_post_modifier stat, *args, &block
-    #  if ( result = get attr ).nil? then
-    ##    set attr, *args, &block
-    #  else
-    #    result
-    #  end
-    #end
+    def __post_modifier_unless stat, attr, *args, &block
+      if ( result = get attr ).nil? then
+        __eval_stat__ stat, attr, *args, &block
+      else
+        result
+      end
+    end
     
     def __modifier_class stat, *args, &block
       if [Module, Class].include? self.class
@@ -82,13 +82,11 @@ module SuperShort
         self.class.__eval_stat__ stat, *args, &block
       end
     end
-
-    def set_unless attr, *args, &block
-      if ( result = get attr ).nil? then
-        set attr, *args, &block
-      else
-        result
-      end
+    
+    def __modifier_try stat, *args, &block
+      begin
+        __eval_stat__ stat, *args, &block
+      rescue NoMethodError; end
     end
     
     alias getter method
@@ -96,12 +94,6 @@ module SuperShort
     def setter attr
       method(:"#{attr}=")
     end
-    
-    #def get_or attr
-    #  begin
-    #    send(:"#{attr}")
-    #  rescue NoMethodError; end
-    #end
 
     def get attr
       send(:"#{attr}")
