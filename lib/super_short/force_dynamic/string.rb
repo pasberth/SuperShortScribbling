@@ -6,18 +6,18 @@ module SuperShort
     
     def __try_convert_into__ klass
       if klass == Symbol then to_sym
-      elsif klass == Integer then to_i
       elsif klass == Float then to_f
+      elsif klass == Integer then to_i
       end
     end
 
     def __type_inference_by_method__ method, *args, &blocke
       if Symbol.instance_methods.include? method
         Symbol
-      elsif Integer.instance_methods.include? method
-        Integer
       elsif Float.instance_methods.include? method
         Float
+      elsif Integer.instance_methods.include? method
+        Integer
       end
     end
   end
