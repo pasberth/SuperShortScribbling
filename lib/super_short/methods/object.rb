@@ -24,5 +24,13 @@ module SuperShort
       else send :"#{attr}=", value
       end
     end
+
+    def set_unless attr, value
+      if ( result = get attr ).nil? then
+        set attr, value
+      else
+        result
+      end
+    end
   end
 end

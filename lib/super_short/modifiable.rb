@@ -27,7 +27,7 @@ module SuperShort
       end
 
       case stat.last
-      when 'if', 'if!', 'unless', 'all', 'all_in', 'in'
+      when 'if', 'if!', 'all', 'all_in', 'in'
         pmod = stat.pop
         return send "__post_modifier_#{pmod}", receiver, stat, *args, &block
       end
@@ -79,15 +79,6 @@ module SuperShort
 
     def __post_modifier_all receiver, stat, *args, &block
       args.shift.each { |*a| __eval_stat__ receiver, stat, *a.flatten(1) }
-    end
-    
-    # TODO
-    def __post_modifier_unless receiver, stat, attr, *args, &block
-      if ( result = get attr ).nil? then
-        __eval_stat__ receiver, stat, attr, *args, &block
-      else
-        result
-      end
     end
     
     def __modifier_will receiver, stat, *args, &block
