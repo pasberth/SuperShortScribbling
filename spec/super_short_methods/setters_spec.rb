@@ -14,6 +14,31 @@ describe "#set" do
   it { subject.set :example, "lisp"; subject.example.should == "lisp" }
 end
 
+describe "#set instance variable" do
+  subject do
+    Class.new do
+      include SuperShort::ObjectMethods
+    end.new
+  end
+
+  it { subject.instance_variable_get(:@example).should be_nil }
+  it { subject.set :@example, "lisp"; subject.instance_variable_get(:@example).should == "lisp" }
+end
+
+describe "#set class variable" do
+  let(:klass) do
+    Class.new do
+      include SuperShort::ObjectMethods
+      @@example = nil
+    end
+  end
+  
+  subject { klass.new }
+
+  it { klass.class_variable_get(:@@example).should be_nil }
+  it { subject.set :@@example, "lisp"; klass.class_variable_get(:@@example).should == "lisp" }
+end
+
 describe "#set_all" do
   subject do
     Class.new do
