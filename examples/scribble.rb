@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 
-# $ ruby examples/scribble.rb <N>
-# for example, $ ruby examples/scribble.rb 5
-
 $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'sss'
 
@@ -16,5 +13,5 @@ INFO
 n.times { |i| puts i } # n.to_i.times { |i| puts i }
 end
 
-# ARGV[0] and main(ARGV[0])
-send_if! :main, ARGV[0]
+# (main(ARGV[0]) if ARGV[0]) or puts ..
+main_if ARGV[0] or puts "Usage: ruby examples/scribble.rb <N>"

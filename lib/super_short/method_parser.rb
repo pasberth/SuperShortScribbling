@@ -6,7 +6,7 @@ module SuperShort
     extend self
     Modifier = one_of('class', 'try')
     PostModifier = one_of('if!', 'if', 'unless', 'all')
-    Verb = one_of('send', 'get', 'set')
+    Verb = apply(/[a-zA-Z0-9]+/, &:join)
     MethodName = one_of(
       apply(Verb, '_', PostModifier) { |v, _, pm| [v, pm] },
       apply(Verb),
