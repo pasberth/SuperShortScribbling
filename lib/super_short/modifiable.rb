@@ -5,7 +5,7 @@ module SuperShort
       stat = ParserCombinators::MethodName.parse(method.to_s) or super
       self.class.class_eval(<<-DEFINE)
         def #{stat.join '_'}(*args, &block)       # def set_if(*args, &block)
-          __eval_stat__(#{stat}, *args, &block)   #   __eval__stat__(["sef", "if"], *args, &block)
+          __eval_stat__(#{stat}, *args, &block)   #   __eval__stat__(["set", "if"], *args, &block)
         end                                       # end
       DEFINE
       send stat.join('_'), *args, &block
