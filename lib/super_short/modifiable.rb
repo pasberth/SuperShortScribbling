@@ -1,8 +1,37 @@
 module SuperShort
   module Modifiable
+    
+    module ClassMethods
+      include ModuleMethods
+      
+      def define_infix_operator name
+        self.default_infix_operators += [name.to_s]
+      end
+      
+      def define_post_modifier name
+        self.default_post_modifiers += [name.to_s]
+      end
+      
+      def define_modifier name
+        self.default_modifiers += [name.to_s]
+      end
+      
+      def self.extended mod
+        mod.default_attr_reader :modifiers, []
+        mod.default_attr_reader :post_modifiers, []
+        mod.default_attr_reader :infix_operators, []
+      end
+    end
+    
+    extend ClassMethods
 
     def method_missing method, *args, &block
-      stat = ParserCombinators::InfixExp.parse(method.to_s) or super
+      stat = ParserCombinators::InfixExp.parse(
+        :input => method.to_s,
+        :modifiers => modifiers,
+        :post_modifiers => post_modifiers,
+        :infix_operators => infix_operators) or super
+
       if stat.empty?
         super
       elsif stat.length == 1
@@ -17,6 +46,16 @@ module SuperShort
       send method, *args, &block
     end
     
+    define_infix_operator 'or'
+    define_infix_operator 'and'
+    define_post_modifier 'if!'
+    define_post_modifier 'if'
+    define_post_modifier 'in'
+    define_post_modifier 'all'
+    define_post_modifier 'all_in'
+    define_modifier 'class'
+    define_modifier 'will'
+
     def __eval_stat__ receiver, stat, *args, &block
       stat = stat.clone
 

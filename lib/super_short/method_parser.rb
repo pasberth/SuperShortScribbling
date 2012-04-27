@@ -4,9 +4,9 @@ module SuperShort
   module ParserCombinators
     include RegParsec::Regparsers
     extend self
-    Modifier = one_of('class', 'try', 'will')
-    InfixOp = one_of('or', 'and')
-    PostModifier = one_of('if!', 'if', 'all_in', 'all', 'in')
+    Modifier = lambda { |state| one_of *state.modifiers }
+    InfixOp = lambda { |state| one_of *state.infix_operators }
+    PostModifier = lambda { |state| one_of *state.post_modifiers }
     Verb = try apply(/[a-zA-Z0-9]+/, &:join)
     MethodName = one_of(
       apply(Verb, '_', PostModifier) { |v, _, pm| [v, pm] },
