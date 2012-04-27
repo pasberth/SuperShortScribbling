@@ -59,26 +59,16 @@ module SuperShort
     def __eval_stat__ receiver, stat, *args, &block
       stat = stat.clone
 
-      case stat.first
-      when 'or', 'and'
+      if infix_operators.include? stat.first
         iop = stat.shift
         return send "__infix_operator_#{iop}", receiver, stat, *args, &block
-      end
-
-      case stat.last
-      when 'if', 'if!', 'all', 'all_in', 'in'
+      elsif post_modifiers.include? stat.last
         pmod = stat.pop
         return send "__post_modifier_#{pmod}", receiver, stat, *args, &block
-      end
-
-      case stat.first
-      when 'class', 'try', 'will'
+      elsif modifiers.include? stat.first
         mod = stat.shift
         return send "__modifier_#{mod}", receiver, stat, *args, &block
-      end
-      
-      case stat.length
-      when 1
+      elsif stat.length == 1
         receiver.send stat.shift, *args, &block
       else
         super
