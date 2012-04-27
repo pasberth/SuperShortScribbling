@@ -14,10 +14,10 @@ module SuperShort
       })\w)*[a-zA-Z0-9]?/, &:join) }
     Objw = lambda { |state| one_of *state.object_words }
     MethodName = one_of(
+      apply(Modifier, '_', proc { MethodName }) { |m, _, (*mn)| [m, *mn] },
       apply(Verb, '_', Objw, '_', PostModifier) { |v, _1, ow, _2, pm| [v, ow, pm] },
       apply(Verb, '_', Objw) { |v, _, ow| [v, ow] },
       apply(Verb, '_', PostModifier) { |v, _, pm| [v, pm] },
-      apply(Modifier, '_', proc { MethodName }) { |m, _, (*mn)| [m, *mn] },
       apply(Verb)
     )
     InfixExp = one_of(
