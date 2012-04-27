@@ -1,4 +1,5 @@
 require 'regparsec'
+require 'give4each'
 
 module SuperShort
   module ParserCombinators
@@ -7,7 +8,10 @@ module SuperShort
     Modifier = lambda { |state| one_of *state.modifiers }
     InfixOp = lambda { |state| one_of *state.infix_operators }
     PostModifier = lambda { |state| one_of *state.post_modifiers }
-    Verb = try apply(/[a-zA-Z0-9]+/, &:join)
+    Verb = lambda { |state|
+      try apply(/[a-zA-Z](?:(?!#{
+        (state.infix_operators + state.post_modifiers).map(&:quote.in(Regexp)).map(&:%.in('(?:_%s)')).join('|')
+      })\w)*[a-zA-Z0-9]?/, &:join) }
     MethodName = one_of(
       apply(Verb, '_', PostModifier) { |v, _, pm| [v, pm] },
       apply(Modifier, '_', proc { MethodName }) { |m, _, (*mn)| [m, *mn] },
