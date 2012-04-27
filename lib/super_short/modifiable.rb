@@ -16,10 +16,15 @@ module SuperShort
         self.default_modifiers += [name.to_s]
       end
       
+      def define_object_word name
+        self.default_object_words += [name.to_s]
+      end
+      
       def self.extended mod
         mod.default_attr_reader :modifiers, []
         mod.default_attr_reader :post_modifiers, []
         mod.default_attr_reader :infix_operators, []
+        mod.default_attr_reader :object_words, []
       end
     end
     
@@ -30,7 +35,8 @@ module SuperShort
         :input => method.to_s,
         :modifiers => modifiers,
         :post_modifiers => post_modifiers,
-        :infix_operators => infix_operators) or super
+        :infix_operators => infix_operators,
+        :object_words => object_words) or super
 
       if stat.empty?
         super
@@ -40,7 +46,7 @@ module SuperShort
       
       self.class.class_eval(<<-DEFINE)
         def #{method}(*args, &block)                    # def set_if(*args, &block)
-          __eval_stat__(self, #{stat}, *args, &block)   #   __eval__stat__(["set", "if"], *args, &block)
+          __eval_stat__(self, #{stat}, *args, &block)   #   __eval__stat__(self, ["set", "if"], *args, &block)
         end                                             # end
       DEFINE
       send method, *args, &block
@@ -51,8 +57,7 @@ module SuperShort
     define_post_modifier 'if!'
     define_post_modifier 'if'
     define_post_modifier 'in'
-    define_post_modifier 'all'
-    define_post_modifier 'all_in'
+    define_object_word 'all'
     define_modifier 'class'
     define_modifier 'will'
 
@@ -61,13 +66,16 @@ module SuperShort
 
       if infix_operators.include? stat.first
         iop = stat.shift
-        return send "__infix_operator_#{iop}", receiver, stat, *args, &block
+        send "__infix_operator_#{iop}", receiver, stat, *args, &block
+      elsif object_words.include? stat.last
+        objw = stat.pop
+        send "__object_word_#{objw}", receiver, stat, *args, &block
       elsif post_modifiers.include? stat.last
         pmod = stat.pop
-        return send "__post_modifier_#{pmod}", receiver, stat, *args, &block
+        send "__post_modifier_#{pmod}", receiver, stat, *args, &block
       elsif modifiers.include? stat.first
         mod = stat.shift
-        return send "__modifier_#{mod}", receiver, stat, *args, &block
+        send "__modifier_#{mod}", receiver, stat, *args, &block
       elsif stat.length == 1
         receiver.send stat.shift, *args, &block
       else
@@ -97,16 +105,11 @@ module SuperShort
       __eval_stat__ receiver, stat, *args, &block
     end
     
-    def __post_modifier_all_in _, stat, receiver, *args, &block
-      stat << 'all'
-      __post_modifier_in( _, stat, receiver, *args, &block)
-    end
-
     def __post_modifier_in _, stat, receiver, *args, &block
       __eval_stat__ receiver, stat, *args, &block
     end
 
-    def __post_modifier_all receiver, stat, *args, &block
+    def __object_word_all receiver, stat, *args, &block
       args.shift.each { |*a| __eval_stat__ receiver, stat, *a.flatten(1) }
     end
     

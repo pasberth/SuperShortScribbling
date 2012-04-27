@@ -10,9 +10,12 @@ module SuperShort
     PostModifier = lambda { |state| one_of *state.post_modifiers }
     Verb = lambda { |state|
       try apply(/[a-zA-Z](?:(?!#{
-        (state.infix_operators + state.post_modifiers).map(&:quote.in(Regexp)).map(&:%.in('(?:_%s)')).join('|')
+        (state.infix_operators + state.object_words + state.post_modifiers).map(&:quote.in(Regexp)).map(&:%.in('(?:_%s)')).join('|')
       })\w)*[a-zA-Z0-9]?/, &:join) }
+    Objw = lambda { |state| one_of *state.object_words }
     MethodName = one_of(
+      apply(Verb, '_', Objw, '_', PostModifier) { |v, _1, ow, _2, pm| [v, ow, pm] },
+      apply(Verb, '_', Objw) { |v, _, ow| [v, ow] },
       apply(Verb, '_', PostModifier) { |v, _, pm| [v, pm] },
       apply(Modifier, '_', proc { MethodName }) { |m, _, (*mn)| [m, *mn] },
       apply(Verb)
