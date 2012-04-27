@@ -15,14 +15,17 @@ module SuperShort
     Objw = lambda { |state| one_of *state.object_words }
     MethodName = one_of(
       apply(Modifier, '_', proc { MethodName }) { |m, _, (*mn)| [m, *mn] },
-      apply(Verb, '_', Objw, '_', PostModifier) { |v, _1, ow, _2, pm| [v, ow, pm] },
       apply(Verb, '_', Objw) { |v, _, ow| [v, ow] },
-      apply(Verb, '_', PostModifier) { |v, _, pm| [v, pm] },
       apply(Verb)
     )
     InfixExp = one_of(
       apply(MethodName, '_', InfixOp, '_', MethodName) { |m1, _1, iop, _2, m2| [iop, m1, m2] },
       MethodName
     )
+    PModExp = one_of(
+      apply(InfixExp, '_', PostModifier) { |iexp, _, pm| [*iexp, pm] },
+      InfixExp
+    )
+    ModifiableMethodName = PModExp
   end
 end

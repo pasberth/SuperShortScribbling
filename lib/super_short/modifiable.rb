@@ -31,7 +31,7 @@ module SuperShort
     extend ClassMethods
 
     def method_missing method, *args, &block
-      stat = ParserCombinators::InfixExp.parse(
+      stat = ParserCombinators::ModifiableMethodName.parse(
         :input => method.to_s,
         :modifiers => modifiers,
         :post_modifiers => post_modifiers,
@@ -65,15 +65,15 @@ module SuperShort
     def __eval_stat__ receiver, stat, *args, &block
       stat = stat.clone
 
-      if infix_operators.include? stat.first
+      if post_modifiers.include? stat.last
+        pmod = stat.pop
+        send "__post_modifier_#{pmod}", receiver, stat, *args, &block
+      elsif infix_operators.include? stat.first
         iop = stat.shift
         send "__infix_operator_#{iop}", receiver, stat, *args, &block
       elsif object_words.include? stat.last
         objw = stat.pop
         send "__object_word_#{objw}", receiver, stat, *args, &block
-      elsif post_modifiers.include? stat.last
-        pmod = stat.pop
-        send "__post_modifier_#{pmod}", receiver, stat, *args, &block
       elsif modifiers.include? stat.first
         mod = stat.shift
         send "__modifier_#{mod}", receiver, stat, *args, &block

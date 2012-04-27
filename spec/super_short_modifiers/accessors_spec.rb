@@ -1,4 +1,4 @@
-describe "OR modifier." do
+describe "OR operator." do
   subject do
     Class.new do
       include SuperShort::ObjectMethods
