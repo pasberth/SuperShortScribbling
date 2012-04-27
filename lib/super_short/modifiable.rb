@@ -60,6 +60,7 @@ module SuperShort
     define_object_word 'all'
     define_modifier 'class'
     define_modifier 'will'
+    define_modifier 'try'
 
     def __eval_stat__ receiver, stat, *args, &block
       stat = stat.clone
@@ -126,9 +127,8 @@ module SuperShort
     end
     
     def __modifier_try receiver, stat, *args, &block
-      begin
-        __eval_stat__ receiver, stat, *args, &block
-      rescue NoMethodError; end
+      __eval_stat__ receiver, stat, *args, &block
+    rescue NoMethodError
     end
   end
 end
