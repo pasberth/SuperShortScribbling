@@ -1,2 +1,4 @@
 .bundle
 .bundler
+Gemfile.lock
+*.gem
